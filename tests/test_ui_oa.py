@@ -72,8 +72,9 @@ def test_notices_shape_filter_and_sanitize(srv):
     assert oa_only and oa_only[0]["id"] == "179577" and oa_only[0]["name"] == "校内通知"
 
 
-def test_notice_detail(srv):
+def test_notice_detail(srv, monkeypatch):
     base, root = srv
+    monkeypatch.setattr(oa, "fetch_detail", lambda *a, **k: (_ for _ in ()).throw(jwxt.NetworkError("offline")))
     (root / "oa_notices.json").write_text(json.dumps(SAMPLE, ensure_ascii=False), encoding="utf-8")
     _, j = _get(base + "/api/oa/notice?id=2")
     it = j["item"]

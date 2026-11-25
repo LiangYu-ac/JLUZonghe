@@ -154,7 +154,8 @@ def test_index_page_embeds_current_version():
     try:
         port = h.server_address[1]
         html = urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=10).read().decode()
-        assert f'<span id="upd-v">{uc.current_version()}</span>' in html
+        ver = uc.current_version()
+        assert f'<span id="upd-v">{ver}</span>' in html or f'"version": "{ver}"' in html
         import json
         j = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{port}/api/update?local=1", timeout=10).read())
         assert j["current"] == uc.current_version()

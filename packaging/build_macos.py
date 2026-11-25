@@ -33,6 +33,9 @@ def _norm_arch() -> str:
 
 
 def main(argv=None) -> int:
+    for _stream in (sys.stdout, sys.stderr):
+        if hasattr(_stream, "reconfigure"):
+            _stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="构建 吉大综合 macOS .app / .dmg")
     parser.add_argument("--skip-frontend", action="store_true", help="跳过 npm run build（复用现有 frontend/dist）")
     parser.add_argument("--no-dmg", action="store_true", help="仅构建 .app，不封装 .dmg")

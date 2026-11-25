@@ -20,6 +20,9 @@ def _read_version() -> str:
 
 
 def main(argv=None) -> int:
+    for _stream in (sys.stdout, sys.stderr):
+        if hasattr(_stream, "reconfigure"):
+            _stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="构建 吉大综合 Windows 独立版 .exe")
     parser.add_argument("--skip-frontend", action="store_true", help="跳过 npm run build（复用现有 frontend/dist）")
     args = parser.parse_args(argv)

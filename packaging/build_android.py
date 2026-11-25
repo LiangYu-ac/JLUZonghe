@@ -91,6 +91,9 @@ def _find_python313() -> Path:
 
 
 def main(argv=None) -> int:
+    for _stream in (sys.stdout, sys.stderr):
+        if hasattr(_stream, "reconfigure"):
+            _stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="构建 SuperJLU Studio Android APK")
     parser.add_argument("--skip-frontend", action="store_true", help="跳过 npm run build（复用现有 frontend/dist）")
     parser.add_argument("--with-tests", action="store_true", help="同时运行 Android Robolectric 单测")

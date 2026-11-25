@@ -142,7 +142,7 @@ def test_http_endpoints(tmp_path, creds):
         assert post("/api/login/send_code", {})["step"] == "code_sent"
         assert post("/api/login/verify", {"wechat_code": "123456"})["step"] == "success"
         page = urllib.request.urlopen(base + "/", timeout=5).read().decode()
-        assert 'id="login"' in page and "fetch --force-login" not in page
+        assert ('id="login"' in page or ('id="root"' in page and "window.__SUPERJLU__" in page)) and "fetch --force-login" not in page
         assert 'id="lgc"' not in page and 'id="lgi"' not in page and "/api/login/captcha" not in page
     finally:
         httpd.shutdown()

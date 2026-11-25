@@ -113,6 +113,9 @@ def ensure_python_apple_support() -> Path:
 
 
 def main(argv=None) -> int:
+    for _stream in (sys.stdout, sys.stderr):
+        if hasattr(_stream, "reconfigure"):
+            _stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="构建 吉大综合 iOS 原生应用与未签名 .ipa")
     parser.add_argument("--skip-frontend", action="store_true", help="跳过 npm run build（复用现有 frontend/dist）")
     parser.add_argument("--stage-only", action="store_true", help="仅暂存 app 与纯 Python 依赖，不运行 xcodebuild")

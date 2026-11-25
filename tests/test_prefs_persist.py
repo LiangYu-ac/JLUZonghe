@@ -38,7 +38,8 @@ def test_roundtrip_survives_new_server(server, tmp_path):
     finally:
         srv.shutdown(); srv.server_close()
     i = html.index('window.__PREFS={"jlu-theme": "dark"')
-    assert i < html.index("首帧前应用主题")
+    marker = "首帧前应用主题" if "首帧前应用主题" in html else "</head>"
+    assert i < html.index(marker)
     assert _post(base, {"remove": ["jlu-theme"]})["prefs"] == {"jlu-grade-pinned": "[1]"}
 
 

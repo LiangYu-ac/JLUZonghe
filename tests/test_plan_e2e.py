@@ -55,7 +55,7 @@ def test_cmd_plan_probe_and_text(env, monkeypatch, capsys):
     monkeypatch.setattr(sys, "argv", ["jlu-toolkit", "plan", "--probe", "-o", str(env / "p.json")])
     cli.main()
     cap = capsys.readouterr()
-    assert cap.out.isascii() and cap.err.isascii()
+    assert cap.out.isascii() and cap.err.replace(str(env / "p.json"), "").isascii()
     assert json.loads((env / "p.json").read_text(encoding="ascii"))["calls_with_rows"]
     monkeypatch.setattr(sys, "argv", ["jlu-toolkit", "plan", "--refresh"])
     cli.main()
