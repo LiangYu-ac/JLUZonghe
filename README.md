@@ -1,6 +1,6 @@
 # 吉大综合
 
-基于开源项目 **[SuperJLU](https://github.com/Runa-Asahi/SuperJLU)**（镜像备份仓库：[Aohpup/SuperJLU](https://github.com/Aohpup/SuperJLU)，MIT 许可证）重新打造界面、视觉徽标（吉大地质宫重檐 × 展开书卷）与多端体验的**吉林大学一站式校园服务应用**。
+多端体验的**吉林大学一站式校园服务应用**。
 
 ## 核心功能
 
