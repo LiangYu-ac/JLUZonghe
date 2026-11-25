@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.pytest_cache/
+.venv/
+venv/
+
+# Node & Frontend build
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Packaging outputs & PyInstaller temp
+dist/
+build/
+*.spec.bak
+
+# Android local config & Gradle/build artifacts
+android/local.properties
+android/.gradle/
+android/build/
+android/app/build/
+android/**/.cxx/
+
+# iOS local dependencies, staged resources & Xcode artifacts
+ios/build_deps/
+ios/App/bundle_app/
+ios/App/bundle_packages/
+ios/*.xcodeproj/
+ios/*.xcworkspace/
+ios/build/
+ios/DerivedData/
+
+# Logs, local configs, secrets & OS files
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+desktop.ini

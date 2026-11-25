@@ -1,0 +1,98 @@
+name: JLUZonghe
+options:
+  bundleIdPrefix: cn.superjlu
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    MARKETING_VERSION: "1.3.4"
+    CURRENT_PROJECT_VERSION: "10304"
+    PRODUCT_NAME: "吉大综合"
+    SWIFT_VERSION: "5.0"
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER: NO
+targets:
+  JLUZonghe:
+    type: application
+    platform: iOS
+    sources:
+      - path: App/Sources
+      - path: App/Resources/Assets.xcassets
+      - path: App/Resources/dylib-Info-template.plist
+        buildPhase: resources
+      - path: App/bundle_app
+        name: app
+        type: folder
+      - path: App/bundle_packages
+        name: app_packages
+        type: folder
+    dependencies:
+      - framework: build_deps/Python.xcframework
+        embed: true
+        codeSign: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: cn.superjlu.app
+        INFOPLIST_FILE: App/Resources/Info.plist
+        SWIFT_OBJC_BRIDGING_HEADER: App/Sources/JLUZonghe-Bridging-Header.h
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1,2"
+        FRAMEWORK_SEARCH_PATHS:
+          - "$(PROJECT_DIR)/build_deps"
+          - "$(inherited)"
+        HEADER_SEARCH_PATHS:
+          - "$(BUILT_PRODUCTS_DIR)/Python.framework/Headers"
+          - "$(inherited)"
+    postBuildScripts:
+      - name: Install Target Specific Python Standard Library
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          DEST_LIB="$CODESIGNING_FOLDER_PATH/python/lib/python3.13"
+          mkdir -p "$DEST_LIB"
+          if [ "$EFFECTIVE_PLATFORM_NAME" = "-iphonesimulator" ]; then
+            SIM_SLICE="$(ls -d "$PROJECT_DIR/build_deps/Python.xcframework"/ios-*simulator 2>/dev/null | head -n1 || true)"
+            if [ -d "$SIM_SLICE/lib/python3.13" ]; then
+              rsync -au --delete "$SIM_SLICE/lib/python3.13/" "$DEST_LIB/"
+            elif [ -d "$PROJECT_DIR/build_deps/python-stdlib" ]; then
+              rsync -au --delete "$PROJECT_DIR/build_deps/python-stdlib/" "$DEST_LIB/"
+            fi
+          else
+            if [ -d "$PROJECT_DIR/build_deps/Python.xcframework/ios-arm64/lib/python3.13" ]; then
+              rsync -au --delete "$PROJECT_DIR/build_deps/Python.xcframework/ios-arm64/lib/python3.13/" "$DEST_LIB/"
+            elif [ -d "$PROJECT_DIR/build_deps/python-stdlib" ]; then
+              rsync -au --delete "$PROJECT_DIR/build_deps/python-stdlib/" "$DEST_LIB/"
+            fi
+          fi
+      - name: Prepare Python Binary Modules
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          install_dylib () {
+            INSTALL_BASE="$1"
+            FULL_EXT="$2"
+            RELATIVE_EXT="${FULL_EXT#$CODESIGNING_FOLDER_PATH/}"
+            PYTHON_EXT="${RELATIVE_EXT#$INSTALL_BASE}"
+            FULL_MODULE_NAME=$(echo "$PYTHON_EXT" | cut -d "." -f 1 | tr "/" ".")
+            FRAMEWORK_BUNDLE_ID=$(echo "${PRODUCT_BUNDLE_IDENTIFIER}.${FULL_MODULE_NAME}" | tr "_" "-")
+            FRAMEWORK_FOLDER="Frameworks/${FULL_MODULE_NAME}.framework"
+            if [ ! -d "$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER" ]; then
+              mkdir -p "$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER"
+              cp "$CODESIGNING_FOLDER_PATH/dylib-Info-template.plist" "$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/Info.plist"
+              plutil -replace CFBundleExecutable -string "$FULL_MODULE_NAME" "$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/Info.plist"
+              plutil -replace CFBundleIdentifier -string "$FRAMEWORK_BUNDLE_ID" "$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/Info.plist"
+            fi
+            mv "$FULL_EXT" "$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/$FULL_MODULE_NAME"
+            echo "${FRAMEWORK_FOLDER}/${FULL_MODULE_NAME}" > "${FULL_EXT%.so}.fwork"
+            echo "${RELATIVE_EXT%.so}.fwork" > "$CODESIGNING_FOLDER_PATH/$FRAMEWORK_FOLDER/${FULL_MODULE_NAME}.origin"
+          }
+          if [ -d "$CODESIGNING_FOLDER_PATH/python/lib/python3.13/lib-dynload" ]; then
+            find "$CODESIGNING_FOLDER_PATH/python/lib/python3.13/lib-dynload" -name "*.so" | while read -r FULL_EXT; do
+              install_dylib "python/lib/python3.13/lib-dynload/" "$FULL_EXT"
+            done
+          fi
+          rm -f "$CODESIGNING_FOLDER_PATH/dylib-Info-template.plist"
+          if [ -n "${EXPANDED_CODE_SIGN_IDENTITY:-}" ]; then
+            find "$CODESIGNING_FOLDER_PATH/Frameworks" -name "*.framework" -exec /usr/bin/codesign --force --sign "$EXPANDED_CODE_SIGN_IDENTITY" ${OTHER_CODE_SIGN_FLAGS:-} -o runtime --timestamp=none --preserve-metadata=identifier,entitlements,flags --generate-entitlement-der "{}" \;
+          fi

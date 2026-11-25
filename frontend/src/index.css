@@ -1,0 +1,143 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-glass: rgba(255, 255, 255, 0.78);
+  --border: rgba(15, 23, 42, 0.075);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --accent: #2557d6;
+  --accent-hover: #1d4ed8;
+  --accent-soft: #eef3ff;
+  --ok: #0d9488;
+  --warn: #d97706;
+  --bad: #e11d48;
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.03), 0 8px 24px -8px rgba(15, 23, 42, 0.06);
+  --shadow-float: 0 12px 32px -8px rgba(15, 23, 42, 0.12);
+}
+
+.dark {
+  --bg: #0b0f1a;
+  --surface: #121826;
+  --surface-2: #171f30;
+  --surface-glass: rgba(18, 24, 38, 0.8);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent: #5b8def;
+  --accent-hover: #6e9cf4;
+  --accent-soft: rgba(91, 141, 239, 0.16);
+  --ok: #10b981;
+  --warn: #f59e0b;
+  --bad: #fb7185;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.25), 0 10px 26px -10px rgba(0, 0, 0, 0.45);
+  --shadow-float: 0 18px 40px -10px rgba(0, 0, 0, 0.6);
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: "Inter", "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei UI", "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.surface-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  border-radius: 16px;
+}
+
+.surface-glass {
+  background-color: var(--surface-glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* Custom thin scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.25);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.45);
+}
+
+/* Notice body typography */
+.rich-notice {
+  font-size: 14.5px;
+  line-height: 1.78;
+  color: var(--text);
+  word-break: break-word;
+}
+.rich-notice p {
+  margin: 0.75em 0;
+}
+.rich-notice img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.rich-notice table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 13px;
+}
+.rich-notice th,
+.rich-notice td {
+  border: 1px solid var(--border-strong);
+  padding: 7px 10px;
+  text-align: left;
+}
+.rich-notice th {
+  background: var(--surface-2);
+  font-weight: 600;
+}
+.rich-notice a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}

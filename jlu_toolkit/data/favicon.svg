@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="jlu-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#003170" />
+      <stop offset="52%" stop-color="#094FA8" />
+      <stop offset="100%" stop-color="#1565D8" />
+    </linearGradient>
+    <radialGradient id="jlu-glow" cx="50%" cy="28%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.14" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="jlu-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE08A" />
+      <stop offset="100%" stop-color="#E5AE35" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1024" height="1024" rx="224" fill="url(#jlu-bg)" />
+  <rect x="0" y="0" width="1024" height="1024" rx="224" fill="url(#jlu-glow)" />
+  <path d="M512,108 A404,404 0 1,0 512,916 A404,404 0 1,0 512,108 Z M512,132 A380,380 0 1,1 512,892 A380,380 0 1,1 512,132 Z" fill="url(#jlu-gold)" fill-rule="evenodd" opacity="0.94" />
+  <path d="M512,154 A358,358 0 1,0 512,870 A358,358 0 1,0 512,154 Z M512,164 A348,348 0 1,1 512,860 A348,348 0 1,1 512,164 Z" fill="#FFFFFF" fill-rule="evenodd" opacity="0.28" />
+  <path d="M512,196 L528,232 L578,240 Q544,254 512,254 Q480,254 446,240 L496,232 Z" fill="url(#jlu-gold)" />
+  <path d="M442,254 L582,254 C626,296 680,322 746,326 C726,356 694,368 656,368 L368,368 C330,368 298,356 278,326 C344,322 398,296 442,254 Z" fill="#FFFFFF" />
+  <path d="M368,376 L656,376 L656,412 L368,412 Z M408,386 L444,386 L444,404 L408,404 Z M494,386 L530,386 L530,404 L494,404 Z M580,386 L616,386 L616,404 L580,404 Z" fill="#FFFFFF" fill-rule="evenodd" />
+  <path d="M332,414 L692,414 C736,448 784,468 836,472 C812,506 774,518 728,518 L296,518 C250,518 212,506 188,472 C240,468 288,448 332,414 Z" fill="#FFFFFF" />
+  <path d="M286,530 L738,530 L738,554 L718,554 L718,656 L756,656 L756,684 L268,684 L268,656 L306,656 L306,554 L286,554 Z M352,566 L402,566 L402,644 L352,644 Z M464,656 L464,598 A48,48 0 0,1 560,598 L560,656 Z M622,566 L672,566 L672,644 L622,644 Z" fill="#FFFFFF" fill-rule="evenodd" />
+  <path d="M254,704 C340,702 436,722 496,766 L496,812 C434,768 344,750 266,752 Z" fill="url(#jlu-gold)" />
+  <path d="M770,704 C684,702 588,722 528,766 L528,812 C590,768 680,750 758,752 Z" fill="url(#jlu-gold)" />
+  <path d="M240,768 C340,766 438,788 512,836 C586,788 684,766 784,768 L770,794 C680,794 584,818 512,866 C440,818 344,794 254,794 Z" fill="#E5AE35" opacity="0.92" />
+</svg>
