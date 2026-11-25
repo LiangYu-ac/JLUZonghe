@@ -67,8 +67,15 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Install Android SDK 35 components
+        run: |
+          { yes || true; } | sdkmanager --licenses >/dev/null
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
       - name: Run Android Robolectric unit tests
         working-directory: android
+        env:
+          PIP_INDEX_URL: https://pypi.org/simple
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon \

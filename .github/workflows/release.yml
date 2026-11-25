@@ -31,16 +31,16 @@ jobs:
           python packaging/build_exe.py
           $ver = python -c "import jlu_toolkit; print(jlu_toolkit.__version__)"
           $src = "dist/吉大综合.exe"
-          $dst = "dist/吉大综合-$ver-windows-x64.exe"
+          $dst = "dist/JLUZonghe-$ver-windows-x64.exe"
           Copy-Item $src $dst -Force
           $hash = (Get-FileHash $dst -Algorithm SHA256).Hash.ToLower()
-          "$hash  吉大综合-$ver-windows-x64.exe" | Out-File -FilePath "$dst.sha256" -Encoding utf8
+          "$hash  JLUZonghe-$ver-windows-x64.exe" | Out-File -FilePath "$dst.sha256" -Encoding utf8
       - uses: actions/upload-artifact@v4
         with:
           name: release-windows
           path: |
-            dist/吉大综合-*-windows-x64.exe
-            dist/吉大综合-*-windows-x64.exe.sha256
+            dist/JLUZonghe-*-windows-x64.exe
+            dist/JLUZonghe-*-windows-x64.exe.sha256
 
   build-macos:
     name: Build macOS (${{ matrix.arch }})
@@ -48,7 +48,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14
+          - os: macos-15
             arch: arm64
           - os: macos-15-intel
             arch: x86_64
@@ -69,12 +69,16 @@ jobs:
           pip install -e ".[desktop,captcha]" pyinstaller pywebview
           (cd frontend && npm ci)
           python3 packaging/build_macos.py
+          ver=$(python3 -c "import re; print(re.search(r'__version__\s*=\s*\"([^\"]+)\"', open('jlu_toolkit/__init__.py', encoding='utf-8').read()).group(1))")
+          arch="${{ matrix.arch }}"
+          cp "dist/吉大综合-${ver}-macos-${arch}.dmg" "dist/JLUZonghe-${ver}-macos-${arch}.dmg"
+          (cd dist && shasum -a 256 "JLUZonghe-${ver}-macos-${arch}.dmg" > "JLUZonghe-${ver}-macos-${arch}.dmg.sha256")
       - uses: actions/upload-artifact@v4
         with:
           name: release-macos-${{ matrix.arch }}
           path: |
-            dist/吉大综合-*-macos-*.dmg
-            dist/吉大综合-*-macos-*.dmg.sha256
+            dist/JLUZonghe-*-macos-*.dmg
+            dist/JLUZonghe-*-macos-*.dmg.sha256
 
   build-android:
     name: Build Android (.apk)
@@ -95,7 +99,9 @@ jobs:
           python-version: "3.13"
       - uses: android-actions/setup-android@v3
       - name: Install Android SDK 35 components
-        run: yes | sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0" >/dev/null
+        run: |
+          { yes || true; } | sdkmanager --licenses >/dev/null
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
       - name: Build Android APK and run Robolectric tests
         env:
           PIP_INDEX_URL: https://pypi.org/simple
@@ -105,12 +111,15 @@ jobs:
           chmod +x android/gradlew
           (cd frontend && npm ci)
           python3 packaging/build_android.py --with-tests
+          ver=$(python3 -c "import re; print(re.search(r'__version__\s*=\s*\"([^\"]+)\"', open('jlu_toolkit/__init__.py', encoding='utf-8').read()).group(1))")
+          cp "dist/吉大综合-${ver}-android.apk" "dist/JLUZonghe-${ver}-android.apk"
+          (cd dist && sha256sum "JLUZonghe-${ver}-android.apk" > "JLUZonghe-${ver}-android.apk.sha256")
       - uses: actions/upload-artifact@v4
         with:
           name: release-android
           path: |
-            dist/吉大综合-*-android.apk
-            dist/吉大综合-*-android.apk.sha256
+            dist/JLUZonghe-*-android.apk
+            dist/JLUZonghe-*-android.apk.sha256
 
   build-ios:
     name: Build iOS (.ipa unsigned)
@@ -131,12 +140,15 @@ jobs:
         run: |
           (cd frontend && npm ci)
           python3 packaging/build_ios.py
+          ver=$(python3 -c "import re; print(re.search(r'__version__\s*=\s*\"([^\"]+)\"', open('jlu_toolkit/__init__.py', encoding='utf-8').read()).group(1))")
+          cp "dist/吉大综合-${ver}-ios-unsigned.ipa" "dist/JLUZonghe-${ver}-ios-unsigned.ipa"
+          (cd dist && shasum -a 256 "JLUZonghe-${ver}-ios-unsigned.ipa" > "JLUZonghe-${ver}-ios-unsigned.ipa.sha256")
       - uses: actions/upload-artifact@v4
         with:
           name: release-ios
           path: |
-            dist/吉大综合-*-ios-unsigned.ipa
-            dist/吉大综合-*-ios-unsigned.ipa.sha256
+            dist/JLUZonghe-*-ios-unsigned.ipa
+            dist/JLUZonghe-*-ios-unsigned.ipa.sha256
 
   publish-release:
     name: Publish GitHub Release
@@ -153,5 +165,20 @@ jobs:
       - name: Create Release and attach all installers
         uses: softprops/action-gh-release@v2
         with:
+          name: 吉大综合 ${{ github.ref_name }}
           generate_release_notes: true
+          body: |
+            ## 吉大综合 ${{ github.ref_name }} 全平台安装包
+
+            ### 桌面端 & 移动端下载说明
+            - **Windows (x64)**：`JLUZonghe-*-windows-x64.exe`（双击即用）
+            - **macOS Apple Silicon (M 系列)**：`JLUZonghe-*-macos-arm64.dmg`
+            - **macOS Intel**：`JLUZonghe-*-macos-x86_64.dmg`
+              > 提示：macOS 初次打开未公证的 `.app` 若提示无法验证或已损坏，请在终端执行 `xattr -cr /Applications/吉大综合.app` 后再打开。
+            - **Android (7.0+ / API 24+)**：`JLUZonghe-*-android.apk`（`arm64-v8a` / `x86_64` 通用）
+            - **iOS (15.0+ 未签名侧载包)**：`JLUZonghe-*-ios-unsigned.ipa`
+              > 提示：可通过 AltStore / SideStore / Sideloadly / TrollStore / Xcode 签名安装至 iPhone 或 iPad。
+
+            ### 校验文件
+            每个安装包均附带对应的 `.sha256` 校验文件，可用于核对下载完整性。
           files: artifacts/*

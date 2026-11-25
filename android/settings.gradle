@@ -1,19 +1,37 @@
 pluginManagement {
     repositories {
-        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
-        maven { url "https://maven.aliyun.com/repository/google" }
-        maven { url "https://maven.aliyun.com/repository/public" }
-        google()
-        mavenCentral()
-        gradlePluginPortal()
+        def isCi = (System.getenv("CI") ?: "").toLowerCase() in ["1", "true", "yes"]
+        if (isCi) {
+            google()
+            mavenCentral()
+            gradlePluginPortal()
+            maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+            maven { url "https://maven.aliyun.com/repository/google" }
+            maven { url "https://maven.aliyun.com/repository/public" }
+        } else {
+            maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
+            maven { url "https://maven.aliyun.com/repository/google" }
+            maven { url "https://maven.aliyun.com/repository/public" }
+            google()
+            mavenCentral()
+            gradlePluginPortal()
+        }
     }
 }
 dependencyResolutionManagement {
     repositories {
-        maven { url "https://maven.aliyun.com/repository/google" }
-        maven { url "https://maven.aliyun.com/repository/public" }
-        google()
-        mavenCentral()
+        def isCi = (System.getenv("CI") ?: "").toLowerCase() in ["1", "true", "yes"]
+        if (isCi) {
+            google()
+            mavenCentral()
+            maven { url "https://maven.aliyun.com/repository/google" }
+            maven { url "https://maven.aliyun.com/repository/public" }
+        } else {
+            maven { url "https://maven.aliyun.com/repository/google" }
+            maven { url "https://maven.aliyun.com/repository/public" }
+            google()
+            mavenCentral()
+        }
     }
 }
 rootProject.name = "JLUToolkit"
